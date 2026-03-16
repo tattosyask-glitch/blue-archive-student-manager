@@ -12,7 +12,9 @@ import { parseFileName } from './utils/parsers';
 import { imageDB, dataUrlToBlob } from './utils/db';
 import { auth, db, signInWithGoogle, logout } from './firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { doc, setDoc, getDoc, collection, getDocs, writeBatch, 
+import { doc, setDoc, getDoc, collection, getDocs, writeBatch } from 'firebase/firestore'; 
+
+const App: React.FC = () => {
 
 function App: React.FC = () => {
     // Data State
