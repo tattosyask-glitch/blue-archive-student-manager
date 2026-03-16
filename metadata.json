@@ -1,0 +1,5 @@
+{
+  "name": "Blue Archive Student Manager",
+  "description": "A comprehensive tool for managing Blue Archive student collection, tracking ownership, levels, and equipment status with image support.",
+  "requestFramePermissions": []
+}

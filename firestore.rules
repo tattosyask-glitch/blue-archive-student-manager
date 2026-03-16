@@ -1,0 +1,90 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: {userId}
+    // Fields:
+    //   - uid: string (required)
+    //   - displayName: string
+    //   - email: string
+    //   - photoURL: string
+    //   - lastLogin: string (date-time)
+    //
+    // Collection: users/{userId}/students
+    // Document ID: {studentId}
+    // Fields:
+    //   - id: number (required)
+    //   - key: string (required)
+    //   - name: string (required)
+    //   - costume: string
+    //   - school: string
+    //   - affiliation: string
+    //   - imageId: string
+    //   - owned: boolean (required)
+    //   - level: number
+    //   - affection: number
+    //   - stars: string
+    //   - skill1, skill2, skill3, skill4: number
+    //   - equip1, equip2, equip3: number
+    //   - loveItem: string
+    //   - updatedAt: string (date-time)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          (request.auth.token.email == "tatto.syask@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['uid']) &&
+             data.uid is string &&
+             (!('email' in data) || data.email is string) &&
+             (!('displayName' in data) || data.displayName is string);
+    }
+
+    function isValidStudent(data) {
+      return data.keys().hasAll(['id', 'key', 'name', 'owned']) &&
+             data.id is number &&
+             data.key is string &&
+             data.name is string &&
+             data.owned is bool &&
+             (!('level' in data) || data.level is number) &&
+             (!('affection' in data) || data.affection is number) &&
+             (!('stars' in data) || data.stars is string);
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) && isValidUser(request.resource.data);
+      allow update: if isOwner(userId) && isValidUser(request.resource.data);
+      
+      match /students/{studentId} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow create: if isOwner(userId) && isValidStudent(request.resource.data);
+        allow update: if isOwner(userId) && isValidStudent(request.resource.data);
+        allow delete: if isOwner(userId);
+      }
+    }
+  }
+}

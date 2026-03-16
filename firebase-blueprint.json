@@ -1,0 +1,55 @@
+{
+  "entities": {
+    "Student": {
+      "title": "Student",
+      "description": "A student character in Blue Archive with their collection status.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "number", "description": "Unique ID for the student record" },
+        "key": { "type": "string", "description": "Unique key for the student (name + costume)" },
+        "name": { "type": "string", "description": "Name of the student" },
+        "costume": { "type": "string", "description": "Costume variant of the student" },
+        "school": { "type": "string", "description": "School affiliation" },
+        "affiliation": { "type": "string", "description": "Club or group within the school" },
+        "imageId": { "type": "string", "description": "Key for the student's image in IndexedDB" },
+        "owned": { "type": "boolean", "description": "Whether the user owns this student" },
+        "level": { "type": "number", "description": "Current level of the student" },
+        "affection": { "type": "number", "description": "Affection/Bond level" },
+        "stars": { "type": "string", "description": "Star rating (e.g., yellow3, blue5)" },
+        "skill1": { "type": "number" },
+        "skill2": { "type": "number" },
+        "skill3": { "type": "number" },
+        "skill4": { "type": "number" },
+        "equip1": { "type": "number" },
+        "equip2": { "type": "number" },
+        "equip3": { "type": "number" },
+        "loveItem": { "type": "string" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Last update timestamp" }
+      },
+      "required": ["id", "key", "name", "owned"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile information.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "displayName": { "type": "string" },
+        "email": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "lastLogin": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile documents"
+    },
+    "users/{userId}/students/{studentId}": {
+      "schema": "Student",
+      "description": "Collection of students for a specific user"
+    }
+  }
+}
