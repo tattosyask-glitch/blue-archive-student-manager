@@ -14,7 +14,7 @@ import { auth, db, signInWithGoogle, logout } from './firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { doc, setDoc, getDoc, collection, getDocs, writeBatch, 
 
-const App: React.FC = () => {
+function App: React.FC = () => {
     // Data State
     const [students, setStudents] = useState<Student[]>([]);
     const [isLoaded, setIsLoaded] = useState(false);
